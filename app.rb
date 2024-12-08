@@ -5,40 +5,47 @@ loader = Zeitwerk::Loader.new
 loader.push_dir('./models')
 loader.setup
 
+require 'sinatra/base'
 
-get '/ping' do
-  content_type 'application/json'
-  { success: true }.to_json
-end
+class App < Sinatra::Base
+  configure :development do
+    set :host_authorization, { permitted_hosts: [] }
+  end
 
-post '/users' do
-  content_type 'application/json'
+  get '/ping' do
+    content_type 'application/json'
+    { success: true }.to_json
+  end
 
-  user = User.create!
+  post '/users' do
+    content_type 'application/json'
 
-  {
-    id: user.id,
-    created_at: user.created_at.to_i,
-  }.to_json
-end
+    user = User.create!
 
-patch '/users/:id' do
-  content_type 'application/json'
+    {
+      id: user.id,
+      created_at: user.created_at.to_i,
+    }.to_json
+  end
 
-  user = User.find(params[:id])
+  patch '/users/:id' do
+    content_type 'application/json'
 
-  request_json = JSON.parse(request.body.read)
-  display_name = request_json['display_name']
-  email = request_json['email']
+    user = User.find(params[:id])
 
-  profile = Profile.find_or_initialize_by(user: user)
-  profile.update!(display_name: display_name, email: email)
+    request_json = JSON.parse(request.body.read)
+    display_name = request_json['display_name']
+    email = request_json['email']
 
-  {
-    id: user.id,
-    profile: {
-      display_name: profile.display_name,
-      email: profile.email,
-    }
-  }.to_json
+    profile = Profile.find_or_initialize_by(user: user)
+    profile.update!(display_name: display_name, email: email)
+
+    {
+      id: user.id,
+      profile: {
+        display_name: profile.display_name,
+        email: profile.email,
+      }
+    }.to_json
+  end
 end
