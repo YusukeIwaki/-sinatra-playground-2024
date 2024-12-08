@@ -9,3 +9,5 @@ gem 'webrick'
 gem 'pg'
 gem 'ridgepole'
 gem 'sinatra-activerecord'
+
+gem 'zeitwerk'

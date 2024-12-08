@@ -1,10 +1,9 @@
-require 'sinatra'
-require 'json'
+require 'bundler'
+Bundler.require :default, (ENV['RACK_ENV'] || :development).to_sym
 
-require 'sinatra/activerecord'
-require 'active_record'
-require './models/user'
-require './models/profile'
+loader = Zeitwerk::Loader.new
+loader.push_dir('./models')
+loader.setup
 
 
 get '/ping' do
